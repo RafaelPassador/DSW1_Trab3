@@ -1,6 +1,6 @@
-# WebDev1 - Spring
+# WebDev1 - Spring REST API
 
-Requisitos A do Módulo 2: Sistema para compra/venda de veículos
+Requisitos A do Módulo 3: Sistema para compra/venda de veículos
 
 ### Arquitetura
 • Modelo-Visão-Controlador

@@ -2,12 +2,9 @@ package br.ufscar.dc.dsw.controller;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import org.apache.catalina.connector.Response;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,7 +25,7 @@ import br.ufscar.dc.dsw.domain.Usuario;
 import br.ufscar.dc.dsw.service.spec.IUsuarioService;
 
 @RestController
-public class ClienteRestController {
+public class LojaRestController {
 
 	@Autowired
 	private IUsuarioService service;
@@ -60,37 +57,51 @@ public class ClienteRestController {
 		}
 		user.setCPF((String) json.get("cpf"));
 		user.setName((String) json.get("name"));
-		user.setTelefone((String) json.get("telefone"));
-		user.setSexo((String) json.get("sexo"));
-		Date birth = new SimpleDateFormat("dd/MM/yyyy").parse((String) json.get("nascimento"));
-		user.setNascimento(birth);
-		user.setRole("ROLE_USER");
+		user.setDescricao((String) json.get("descricao"));
+		user.setRole("ROLE_STORE");
 		user.setEnabled(true);
 
 	}
 
-	private boolean isCPFValid(String cpf, Long id) {
-		for (Usuario u : service.buscarTodos()) {
-			if (u.getId() != id && u.getRole().toLowerCase().equals("role_user") && u.getCPF().equals(cpf))
+	private boolean isCNPJValid(String cnpj, Long id) {
+		for (Usuario usuario : service.buscarTodos()) {
+			if (usuario.getId() != id && usuario.getRole().toLowerCase().equals("role_store")
+					&& usuario.getCPF().equals(cnpj))
 				return false;
 		}
-		return cpf.length() == 14;
+
+		return cnpj.length() == 18;
 	}
 
-	@GetMapping(path = "/clientes")
-	public ResponseEntity<List<Usuario>> lista() {
-		List<Usuario> listaTodos = service.buscarTodos(), lista = new ArrayList<>();
-		for (Usuario u : listaTodos)
-			if (u.getRole().toLowerCase().equals("role_user"))
-				lista.add(u);
-
-		if (lista.isEmpty()) {
-			return ResponseEntity.notFound().build();
+	private boolean isUsernameValid(String username, Long id) {
+		for (Usuario usuario : service.buscarTodos()) {
+			if (usuario.getId() != id && usuario.getUsername().equals(username))
+				return false;
 		}
-		return ResponseEntity.ok(lista);
+
+		return true;
 	}
 
-	@PostMapping(path = "/clientes")
+	@GetMapping(path = "/lojas")
+	public ResponseEntity<List<Usuario>> lista() {
+		try {
+			System.out.println("JORGEEEEEEEEEEE");
+			List<Usuario> listaTodos = service.buscarTodos(), lista = new ArrayList<>();
+			for (Usuario u : listaTodos)
+				if (u.getRole().toLowerCase().equals("role_store"))
+					lista.add(u);
+
+			if (lista.isEmpty()) {
+				return ResponseEntity.notFound().build();
+			}
+			return ResponseEntity.ok(lista);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+	}
+
+	@PostMapping(path = "/lojas")
 	@ResponseBody
 	public ResponseEntity<Usuario> cria(@RequestBody JSONObject json) {
 		try {
@@ -98,7 +109,8 @@ public class ClienteRestController {
 				System.out.println("Json valido");
 				Usuario user = new Usuario();
 				parse(user, json);
-				if (!isCPFValid(user.getCPF(), Long.parseLong("-1")))
+				if (!isCNPJValid(user.getCPF(), Long.parseLong("-1"))
+						|| !isUsernameValid(user.getUsername(), Long.parseLong("-1")))
 					return ResponseEntity.badRequest().body(null);
 				service.salvar(user);
 				return ResponseEntity.ok(user);
@@ -113,16 +125,16 @@ public class ClienteRestController {
 		}
 	}
 
-	@GetMapping(path = "/clientes/{id}")
+	@GetMapping(path = "/lojas/{id}")
 	public ResponseEntity<Usuario> lista(@PathVariable("id") long id) {
 		Usuario user = service.buscarPorId(id);
-		if (user == null || !user.getRole().toLowerCase().equals("role_user")) {
+		if (user == null || !user.getRole().toLowerCase().equals("role_store")) {
 			return ResponseEntity.notFound().build();
 		}
 		return ResponseEntity.ok(user);
 	}
 
-	@PutMapping(path = "/clientes/{id}")
+	@PutMapping(path = "/lojas/{id}")
 	public ResponseEntity<Usuario> atualiza(@PathVariable("id") long id, @RequestBody JSONObject json) {
 		System.out.println("PUTZIN DOS CRIA");
 		try {
@@ -132,13 +144,9 @@ public class ClienteRestController {
 				if (user == null) {
 					return ResponseEntity.notFound().build();
 				} else {
-					System.out.println("Bef parse");
 					parse(user, json);
-					System.out.println("Bef pass");
-
-					if (!isCPFValid(user.getCPF(), id))
+					if (!isCNPJValid(user.getCPF(), user.getId()) || !isUsernameValid(user.getUsername(), user.getId()))
 						return ResponseEntity.badRequest().body(null);
-					System.out.println("Bef save");
 					service.salvar(user);
 					return ResponseEntity.ok(user);
 				}
@@ -151,7 +159,7 @@ public class ClienteRestController {
 		}
 	}
 
-	@DeleteMapping(path = "/clientes/{id}")
+	@DeleteMapping(path = "/lojas/{id}")
 	public ResponseEntity<Boolean> remove(@PathVariable("id") long id) {
 
 		Usuario user = service.buscarPorId(id);
@@ -162,5 +170,4 @@ public class ClienteRestController {
 			return ResponseEntity.noContent().build();
 		}
 	}
-
 }

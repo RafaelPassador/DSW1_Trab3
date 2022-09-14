@@ -69,9 +69,9 @@ public class ClienteRestController {
 
 	}
 
-	private boolean isCPFValid(String cpf) {
+	private boolean isCPFValid(String cpf, Long id) {
 		for (Usuario u : service.buscarTodos()) {
-			if (u.getRole().toLowerCase().equals("role_user") && u.getCPF().equals(cpf))
+			if (u.getId() != id && u.getRole().toLowerCase().equals("role_user") && u.getCPF().equals(cpf))
 				return false;
 		}
 		return true;
@@ -98,7 +98,7 @@ public class ClienteRestController {
 				System.out.println("Json valido");
 				Usuario user = new Usuario();
 				parse(user, json);
-				if (!isCPFValid(user.getCPF()))
+				if (!isCPFValid(user.getCPF(), Long.parseLong("-1")))
 					return ResponseEntity.badRequest().body(null);
 				service.salvar(user);
 				return ResponseEntity.ok(user);
@@ -132,9 +132,13 @@ public class ClienteRestController {
 				if (user == null) {
 					return ResponseEntity.notFound().build();
 				} else {
+					System.out.println("Bef parse");
 					parse(user, json);
-					if (!isCPFValid(user.getCPF()))
+					System.out.println("Bef pass");
+
+					if (!isCPFValid(user.getCPF(), id))
 						return ResponseEntity.badRequest().body(null);
+					System.out.println("Bef save");
 					service.salvar(user);
 					return ResponseEntity.ok(user);
 				}

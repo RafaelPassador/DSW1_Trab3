@@ -86,6 +86,8 @@ public class VendaCarrosApplication {
 			c.setPlaca("katchau");
 			c.setQuilometragem(BigDecimal.valueOf(10));
 			c.setValor(BigDecimal.valueOf(100.20));
+			c.setPictures(
+					"download.jpeg|12683.jpeg|faustao-2.jpeg|faustao-2.jpeg|download.jpeg|faustao-2.jpeg|12683.jpeg|faustao-2.jpeg|faustao-2.jpeg|12683.jpeg|");
 			carroDAO.save(c);
 
 		};

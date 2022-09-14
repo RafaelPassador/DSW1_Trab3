@@ -128,6 +128,7 @@ public class CarroController {
 		if (carro.getFotosImagePath() != null)
 			overFoto = carro.getFotosImagePath().size() >= 10;
 		if (overFoto) {
+			// System.out.println("AQUI TEM MAIS DE 10");
 			attr.addFlashAttribute("fail", "carro.fotos.fail");
 			return "redirect:/carros/listar";
 		}
@@ -182,11 +183,10 @@ public class CarroController {
 	public Map<Long, List<String>> listaFotos() {
 		Map<Long, List<String>> mapPhoto = new HashMap<>();
 		System.out.println(carroService.searchAll().size() + "TAMANHAO");
-
-		for (Carro carro : carroService.searchAll()) {
-			List<String> carPics = carroService.searchImages(carro.getPictures());
+		for (Carro c : carroService.searchAll()) {
+			List<String> carPics = c.getFotosImagePath();
 			if (carPics != null)
-				mapPhoto.put(carro.getId(), carPics);
+				mapPhoto.put(c.getId(), carPics);
 		}
 		System.out.println("SO VAMO VER ESSAS FOTO");
 

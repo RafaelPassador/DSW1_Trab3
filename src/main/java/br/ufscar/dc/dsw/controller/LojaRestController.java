@@ -85,7 +85,6 @@ public class LojaRestController {
 	@GetMapping(path = "/lojas")
 	public ResponseEntity<List<Usuario>> lista() {
 		try {
-			System.out.println("JORGEEEEEEEEEEE");
 			List<Usuario> listaTodos = service.buscarTodos(), lista = new ArrayList<>();
 			for (Usuario u : listaTodos)
 				if (u.getRole().toLowerCase().equals("role_store"))
@@ -136,11 +135,9 @@ public class LojaRestController {
 
 	@PutMapping(path = "/lojas/{id}")
 	public ResponseEntity<Usuario> atualiza(@PathVariable("id") long id, @RequestBody JSONObject json) {
-		System.out.println("PUTZIN DOS CRIA");
 		try {
 			if (isJSONValid(json.toString())) {
 				Usuario user = service.buscarPorId(id);
-				System.out.println("FOUND THE " + id);
 				if (user == null) {
 					return ResponseEntity.notFound().build();
 				} else {

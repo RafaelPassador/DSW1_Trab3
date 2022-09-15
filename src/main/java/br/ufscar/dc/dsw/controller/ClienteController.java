@@ -44,9 +44,6 @@ public class ClienteController {
 			return "cliente/cadastro";
 		}
 
-		// System.out.println("password = " + cliente.getPassword());
-
-		// cliente.setPassword(encoder.encode(cliente.getPassword()));
 		service.salvar(cliente);
 
 		attr.addFlashAttribute("sucess", "cliente.create.sucess");
@@ -66,8 +63,6 @@ public class ClienteController {
 		if (result.hasErrors()) {
 			return "cliente/cadastro";
 		}
-
-		// System.out.println(cliente.getPassword());
 
 		service.salvar(cliente);
 		attr.addFlashAttribute("sucess", "cliente.edit.sucess");

@@ -50,7 +50,6 @@ public class CarroController {
 	@GetMapping("/listar")
 	public String listar(ModelMap model, Principal principal) {
 		List<Carro> Cars = carroService.searchAll();
-		System.out.println("Entrou");
 		if (principal != null) {
 
 			Usuario user = usuarioService.buscarPorUsuario(principal.getName());
@@ -77,7 +76,6 @@ public class CarroController {
 			model.addAttribute("visitingRole", role);
 		}
 		model.addAttribute("carros", Cars);
-		System.out.println("ATE AQUI VEIO2 = " + Cars.size());
 
 		return "carro/lista";
 	}
@@ -86,15 +84,9 @@ public class CarroController {
 	public String salvar(@Valid Carro carro, BindingResult result, RedirectAttributes attr, Principal principal,
 			@RequestParam("image") MultipartFile file) throws IOException {
 
-		System.out.println("Entrouu salva");
 		Usuario loja = usuarioService.buscarPorUsuario(principal.getName());
 
-		// System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" +
-		// principal.getName());
-
 		if (result.hasErrors()) {
-			for (ObjectError o : result.getAllErrors())
-				System.out.println(o.getDefaultMessage());
 			return "carro/cadastro";
 		}
 
@@ -128,12 +120,10 @@ public class CarroController {
 		if (carro.getFotosImagePath() != null)
 			overFoto = carro.getFotosImagePath().size() >= 10;
 		if (overFoto) {
-			// System.out.println("AQUI TEM MAIS DE 10");
 			attr.addFlashAttribute("fail", "carro.fotos.fail");
 			return "redirect:/carros/listar";
 		}
 
-		System.out.println("Editandoo" + carro.getPictures() + " bool = " + overFoto);
 		Usuario loja = usuarioService.buscarPorUsuario(principal.getName());
 
 		if (result.getFieldErrorCount() > 1 || result.getFieldError("placa") == null) {
@@ -142,7 +132,6 @@ public class CarroController {
 		carro.setLoja(loja);
 
 		carroService.salvar(carro);
-		System.out.println("TCHAU MUNDO2" + carro.getPictures());
 		attr.addFlashAttribute("sucess", "carro.edit.sucess");
 		// return "redirect:/carros/listar";
 		return saveCarPhoto(carro, file);
@@ -166,10 +155,7 @@ public class CarroController {
 		String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
 		carro.setPictures(fileName);
 
-		System.out.println("ARQUIVIN AQUI" + carro.getPictures());
-		System.out.println("ARQUIVIN AQUI" + carro.getPlaca());
 		carroService.salvar(carro);
-		System.out.println("ARQUIVIN AQUI" + carro.getId() + "SALVO");
 		// Carro savedCarro = repo.save(carro);
 
 		String uploadDir = "carros-fotos/" + carro.getId();
@@ -182,16 +168,11 @@ public class CarroController {
 	@ModelAttribute("pictures")
 	public Map<Long, List<String>> listaFotos() {
 		Map<Long, List<String>> mapPhoto = new HashMap<>();
-		System.out.println(carroService.searchAll().size() + "TAMANHAO");
 		for (Carro c : carroService.searchAll()) {
 			List<String> carPics = c.getFotosImagePath();
 			if (carPics != null)
 				mapPhoto.put(c.getId(), carPics);
 		}
-		System.out.println("SO VAMO VER ESSAS FOTO");
-
-		for (Long l : mapPhoto.keySet())
-			System.out.println(mapPhoto.get(l));
 
 		return mapPhoto;
 	}

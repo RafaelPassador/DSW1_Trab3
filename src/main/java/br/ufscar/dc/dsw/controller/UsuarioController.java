@@ -51,19 +51,12 @@ public class UsuarioController {
 	}
 
 	@PostMapping("/salvar")
-	// public String salvar(@Valid Cliente usuario, BindingResult result,
-	// RedirectAttributes attr) {
 	public String salvar(@Valid Usuario usuario, BindingResult result, RedirectAttributes attr) {
 
-		// System.out.println("HELLOOOOOO");sssss
 		boolean red = usuario.getCPF().length() > 14;
 		if (result.hasErrors()) {
 			return "usuario/cadastro" + (red ? "L" : "C");
 		}
-
-		// Usuario usuario = (Usuario) usuario2;
-
-		// System.out.println("password = " + usuario.getPassword());
 
 		usuario.setPassword(encoder.encode(usuario.getPassword()));
 		service.salvar(usuario);
@@ -87,8 +80,6 @@ public class UsuarioController {
 		if (result.getFieldErrorCount() > 1 || result.getFieldError("CPF") == null) {
 			return "usuario/cadastro" + (red ? "L" : "C");
 		}
-
-		System.out.println(usuario.getPassword());
 
 		service.salvar(usuario);
 		attr.addFlashAttribute("sucess", (red ? "loja" : "cliente") + ".edit.sucess");

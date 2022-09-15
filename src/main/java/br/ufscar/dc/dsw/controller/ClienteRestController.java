@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.catalina.connector.Response;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -124,21 +123,16 @@ public class ClienteRestController {
 
 	@PutMapping(path = "/clientes/{id}")
 	public ResponseEntity<Usuario> atualiza(@PathVariable("id") long id, @RequestBody JSONObject json) {
-		System.out.println("PUTZIN DOS CRIA");
 		try {
 			if (isJSONValid(json.toString())) {
 				Usuario user = service.buscarPorId(id);
-				System.out.println("FOUND THE " + id);
 				if (user == null) {
 					return ResponseEntity.notFound().build();
 				} else {
-					System.out.println("Bef parse");
 					parse(user, json);
-					System.out.println("Bef pass");
 
 					if (!isCPFValid(user.getCPF(), id))
 						return ResponseEntity.badRequest().body(null);
-					System.out.println("Bef save");
 					service.salvar(user);
 					return ResponseEntity.ok(user);
 				}

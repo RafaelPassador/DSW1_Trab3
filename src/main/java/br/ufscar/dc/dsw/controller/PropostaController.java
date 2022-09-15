@@ -88,27 +88,14 @@ public class PropostaController {
 		Usuario user = usuarioService.buscarPorUsuario(principal.getName());
 
 		if (result.hasErrors()) {
-			System.out.println("TEM ERRO");
 			return "proposta/cadastro";
 		}
-		// System.out.println("OII");
-		// if(prev.getCarro() == null)
-		// System.out.println("MANOoOOOOO");
-		// System.out.println("OII2");
 		prop.setLoja(gamb.getLoja());
 		prop.setCarro(gamb.getCarro());
 		prop.setUsuario(user);
 		prop.setData_proposta(new Date());
 		prop.setEstado("ABERTO");
-		if (prop.getLoja() == null)
-			System.out.println("WHYYY LUCI WHYTY");
-		System.out.println("Quase" + prop.getLoja().getName());
-		System.out.println("Quase" + prop.getCarro().getPlaca());
-		System.out.println("Quase" + prop.getValor());
-		System.out.println("Quase" + prop.getCondicoes());
-		System.out.println("Quase" + prop.getCarro().getPlaca());
 		propService.salvar(prop);
-		System.out.println("Salvo");
 		attr.addFlashAttribute("sucess", "proposta.create.sucess");
 		return "redirect:/propostas/listar";
 	}
@@ -138,7 +125,6 @@ public class PropostaController {
 		nova.setLoja(store);
 		nova.setCarro(carro);
 		gamb = nova;
-		System.out.println("AQUI DEU" + nova.getLoja().getName() + " " + nova.getCarro().getPlaca());
 		model.addAttribute("proposta", nova);
 		return "proposta/cadastro";
 	}

@@ -44,9 +44,6 @@ public class LojaController {
 			return "loja/cadastro";
 		}
 
-		// System.out.println("password = " + cliente.getPassword());
-
-		// cliente.setPassword(encoder.encode(cliente.getPassword()));
 		service.salvar(loja);
 
 		attr.addFlashAttribute("sucess", "loja.create.sucess");
@@ -66,8 +63,6 @@ public class LojaController {
 		if (result.hasErrors()) {
 			return "loja/cadastro";
 		}
-
-		// System.out.println(loja.getPassword());
 
 		service.salvar(loja);
 		attr.addFlashAttribute("sucess", "loja.edit.sucess");
